@@ -66,18 +66,51 @@ natl_grandtots_bothyears
 write_xlsx(natl_grandtots_bothyears, "output/natl_grandtots_bothyears.xlsx")
 
 
-# 
-# state_latest %>% 
-#   group_by(state) %>% 
-#   summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE)
-#   )
-# 
-# 
-# #group into aggregate totals by state
-# statetotals <- statecnt %>% 
-#   group_by(state) %>% 
-#   summarise(total_advance_2018 = sum(ballot_return_count_2018, na.rm = TRUE),
-#             total_advance_2016 = sum(ballot_return_count_2016, na.rm = TRUE),
-#             total_advance_2014 = sum(ballot_return_count_2014, na.rm = TRUE)
-#   )
-# 
+
+### STATE LEVEL ####
+
+state_latest %>%
+  group_by(state) %>%
+  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE)
+  )
+
+#calculate state grand totals for early voting
+#2020
+state_grandtots_2020 <- state_latest %>% 
+  group_by(state) %>%
+  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+            total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+  )
+
+state_grandtots_2020
+
+#2016
+state_grandtots_2016 <- state_2016 %>% 
+  group_by(state) %>%
+  summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
+            total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
+  )
+
+state_grandtots_2016
+
+#join years into one table
+state_grandtots_bothyears <- left_join(state_grandtots_2020, state_grandtots_2016, by = "state") %>% 
+                                    select(state, total_requested_2016, total_returned_2016, everything())
+
+state_grandtots_bothyears
+
+
+#calculate change
+state_grandtots_bothyears <- state_grandtots_bothyears %>% 
+  mutate(
+    diff_requested = total_requested_2020 - total_requested_2016,
+    pctchg_requested = round_half_up((total_requested_2020 - total_requested_2016) / total_requested_2016 * 100, 2),
+    diff_returned = total_returned_2020 - total_returned_2016,
+    pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+  ) 
+
+state_grandtots_bothyears
+
+
+
+
