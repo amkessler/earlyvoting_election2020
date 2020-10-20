@@ -2,6 +2,7 @@ library(tidyverse)
 library(janitor)
 library(lubridate)
 library(writexl)
+library(tidycensus)
 options(scipen = 999)
 
 # load processed data files from step 01
@@ -162,6 +163,17 @@ county_grandtots_bothyears <- county_grandtots_bothyears %>%
   ) 
 
 county_grandtots_bothyears
+
+#bring in fips lookup table from tidycensus package to add names etc to accompany fips codes
+head(fips_codes)
+
+fips_lookuptable <- fips_codes %>% 
+  as_tibble() %>% 
+  mutate(
+    countyfips = paste0(state_code, county_code)
+  ) %>% 
+  select(countyfips, everything(), -state_code, -county_code)
+
 
 #save output to file
 write_xlsx(county_grandtots_bothyears, "output/county_grandtots_bothyears.xlsx")
