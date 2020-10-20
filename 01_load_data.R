@@ -24,6 +24,15 @@ county_latest <- county_latest %>%
     ballots_returned = as.numeric(ballots_returned)
   )
 
+#fix fips codes with missing leading zeros
+county_latest <- county_latest %>% 
+  mutate(
+    countyfips = if_else(str_length(countyfips) == 4, paste0("0", countyfips), countyfips)
+  ) 
+
+#check results
+county_latest %>% 
+  filter(state == "AZ")
 
 
 #import raw historical files for 2016 ####
@@ -46,8 +55,19 @@ county_2016 <- county_2016 %>%
     ballots_returned = as.numeric(ballots_returned)
   )
 
+#fix fips codes with missing leading zeros
+county_2016 <- county_2016 %>% 
+  mutate(
+    countyfips = if_else(str_length(countyfips) == 4, paste0("0", countyfips), countyfips)
+  ) 
 
-### save results for use in analysis steps ####
+#check results
+county_2016 %>% 
+  filter(state == "AZ")
+
+
+
+### save results for use in subsequent analysis steps ####
 saveRDS(state_latest, "processed_data/state_latest.rds")
 saveRDS(county_latest, "processed_data/county_latest.rds")
 saveRDS(state_2016, "processed_data/state_2016.rds")
