@@ -3,8 +3,9 @@ library(janitor)
 library(lubridate)
 
 #import raw daily files for 2020 ####
-state_latest <- read_tsv("raw_data/20201019_1_avev_delivery_state.txt.gz", col_types = cols(.default = "c"))
-county_latest <- read_tsv("raw_data/20201019_1_avev_delivery_county.txt.gz", col_types = cols(.default = "c"))
+#when downloading new files, rename the new ones to have "latest" in place of their proceeding datestamp
+state_latest <- read_tsv("raw_data/latest_avev_delivery_state.txt.gz", col_types = cols(.default = "c"))
+county_latest <- read_tsv("raw_data/latest_avev_delivery_county.txt.gz", col_types = cols(.default = "c"))
 
 #format columns
 state_latest
