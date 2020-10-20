@@ -111,6 +111,7 @@ state_grandtots_bothyears <- state_grandtots_bothyears %>%
 
 state_grandtots_bothyears
 
-
+#save output to file
+write_xlsx(state_grandtots_bothyears, "output/state_grandtots_bothyears.xlsx")
 
 
