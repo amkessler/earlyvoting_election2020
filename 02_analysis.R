@@ -174,6 +174,11 @@ fips_lookuptable <- fips_codes %>%
   ) %>% 
   select(countyfips, everything(), -state_code, -county_code)
 
+#join to main table
+county_grandtots_bothyears <- inner_join(fips_lookuptable, county_grandtots_bothyears, by = "countyfips")
+
+county_grandtots_bothyears
+
 
 #save output to file
 write_xlsx(county_grandtots_bothyears, "output/county_grandtots_bothyears.xlsx")
