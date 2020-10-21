@@ -5,16 +5,17 @@ library(writexl)
 library(tidycensus)
 options(scipen = 999)
 
+#set the variable for days before the election
+### CHANGE THIS DAILY AS NEEDED
+before_election_choice <- 12
+
+
 # load processed data files from step 01
 state_latest <- readRDS("processed_data/state_latest.rds")
 county_latest <- readRDS("processed_data/county_latest.rds")
 state_2016 <- readRDS("processed_data/state_2016.rds")
 county_2016 <- readRDS("processed_data/county_2016.rds")
 
-
-#set the variable for days before the election
-### CHANGE THIS DAILY AS NEEDED
-before_election_choice <- 13
 
 
 #filter all the datasets based on days before election desired
