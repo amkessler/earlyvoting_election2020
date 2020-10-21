@@ -196,10 +196,21 @@ state_latest %>%
     total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
     ) %>% 
   mutate(
-    pcttotal_requested = total_requested_2020 / sum(total_requested_2020),
-    pcttotal_returned = total_returned_2020 / sum(total_returned_2020)
+    pcttotal_requested = round_half_up(total_requested_2020 / sum(total_requested_2020) * 100, 2),
+    pcttotal_returned = round_half_up(total_returned_2020 / sum(total_returned_2020) * 100, 2)
     )
 
 
+state_latest %>% 
+  filter(state == "OH") %>% 
+  group_by(party_affiliation) %>% 
+  summarise(
+    total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+    total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  mutate(
+    pcttotal_requested = round_half_up(total_requested_2020 / sum(total_requested_2020) * 100, 2),
+    pcttotal_returned = round_half_up(total_returned_2020 / sum(total_returned_2020) * 100, 2)
+  )
 
 
