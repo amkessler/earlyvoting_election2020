@@ -69,7 +69,8 @@ natl_grandtots_bothyears <- natl_grandtots_bothyears %>%
 natl_grandtots_bothyears
 
 #save output to file
-write_xlsx(natl_grandtots_bothyears, "output/natl_grandtots_bothyears.xlsx")
+filename_natltots <- paste0("output/natl_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
+write_xlsx(natl_grandtots_bothyears, filename_natltots)
 
 
 
@@ -118,7 +119,10 @@ state_grandtots_bothyears <- state_grandtots_bothyears %>%
 state_grandtots_bothyears
 
 #save output to file
-write_xlsx(state_grandtots_bothyears, "output/state_grandtots_bothyears.xlsx")
+filename_statetots <- paste0("output/state_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
+write_xlsx(state_grandtots_bothyears, filename_statetots)
+
+
 
 
 ### COUNTY LEVEL ####
@@ -182,7 +186,8 @@ county_grandtots_bothyears
 
 
 #save output to file
-write_xlsx(county_grandtots_bothyears, "output/county_grandtots_bothyears.xlsx")
+filename_countytots <- paste0("output/county_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
+write_xlsx(county_grandtots_bothyears, filename_countytots)
 
 
 
