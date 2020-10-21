@@ -191,7 +191,15 @@ write_xlsx(county_grandtots_bothyears, "output/county_grandtots_bothyears.xlsx")
 state_latest %>% 
   filter(state == "PA") %>% 
   group_by(party_affiliation) %>% 
-  summarise(sum(ballots_requested))
+  summarise(
+    total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+    total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+    ) %>% 
+  mutate(
+    pcttotal_requested = total_requested_2020 / sum(total_requested_2020),
+    pcttotal_returned = total_returned_2020 / sum(total_returned_2020)
+    )
+
 
 
 
