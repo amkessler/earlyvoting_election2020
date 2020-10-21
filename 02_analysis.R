@@ -186,3 +186,32 @@ write_xlsx(county_grandtots_bothyears, "output/county_grandtots_bothyears.xlsx")
 
 
 
+
+#### DEMOGRAPHIC BREAKDOWNS ##### 
+
+state_latest %>% 
+  filter(state == "PA") %>% 
+  group_by(party_affiliation) %>% 
+  summarise(
+    total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+    total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+    ) %>% 
+  mutate(
+    pcttotal_requested = round_half_up(total_requested_2020 / sum(total_requested_2020) * 100, 2),
+    pcttotal_returned = round_half_up(total_returned_2020 / sum(total_returned_2020) * 100, 2)
+    )
+
+
+state_latest %>% 
+  filter(state == "OH") %>% 
+  group_by(party_affiliation) %>% 
+  summarise(
+    total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+    total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  mutate(
+    pcttotal_requested = round_half_up(total_requested_2020 / sum(total_requested_2020) * 100, 2),
+    pcttotal_returned = round_half_up(total_returned_2020 / sum(total_returned_2020) * 100, 2)
+  )
+
+
