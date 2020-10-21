@@ -185,3 +185,13 @@ write_xlsx(county_grandtots_bothyears, "output/county_grandtots_bothyears.xlsx")
 
 
 
+
+#### DEMOGRAPHIC BREAKDOWNS ##### 
+
+state_latest %>% 
+  filter(state == "PA") %>% 
+  group_by(party_affiliation) %>% 
+  summarise(sum(ballots_requested))
+
+
+
