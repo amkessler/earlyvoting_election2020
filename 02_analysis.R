@@ -79,10 +79,10 @@ county_bothcycles
 ### NATIONAL ####
 
 ### calculate grand totals nationally for each cycle
+#we'll just to returned here, since some states deal with requested differently in 2020
 natl_grandtots_bothyears <- state_bothcycles %>% 
   group_by(cycle) %>% 
   summarise(
-    total_requested = sum(ballots_requested, na.rm = TRUE),
     total_returned = sum(ballots_returned, na.rm = TRUE)
   ) 
 
@@ -90,15 +90,14 @@ natl_grandtots_bothyears
 
 #reshape to wide format to allow for comparison calculations
 natl_grandtots_bothyears <- natl_grandtots_bothyears %>% 
-  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
+  pivot_wider(names_from = cycle, values_from = total_returned) %>% 
+  clean_names()
 
 #calculate change
 natl_grandtots_bothyears <- natl_grandtots_bothyears %>% 
   mutate(
-    diff_requested = total_requested_2020 - total_requested_2016,
-    pctchg_requested = round_half_up((total_requested_2020 - total_requested_2016) / total_requested_2016 * 100, 2),
-    diff_returned = total_returned_2020 - total_returned_2016,
-    pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+    diff_returned = x2020 - x2016,
+    pctchg_returned = round_half_up((x2020 - x2016) / x2016 * 100, 2)
   ) 
 
 natl_grandtots_bothyears
@@ -130,6 +129,16 @@ state_grandtots_bothyears <- state_grandtots_bothyears %>%
   ) 
 
 state_grandtots_bothyears
+
+#deal with how several states don't report requested, only returned in 2020
+#the data structure deals with this by putting the identicial returned number into requested 
+#we'll change such instances to NA for the change calculations to avoid confusion
+state_grandtots_bothyears <- state_grandtots_bothyears %>% 
+  mutate(
+    diff_requested = na_if(total_requested_2020, total_returned_2020),
+    pctchg_requested = na_if(total_requested_2020, total_returned_2020),
+    total_requested_2020 = na_if(total_requested_2020, total_returned_2020)
+    )
 
 #save output to file
 filename_statetots <- paste0("output/state_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
@@ -176,6 +185,15 @@ county_grandtots_bothyears <- inner_join(fips_lookuptable, county_grandtots_both
 
 county_grandtots_bothyears
 
+#deal with how several states don't report requested, only returned in 2020
+#the data source deals with this by putting the identicial returned number into requested 
+#we'll change such instances to NA 
+county_grandtots_bothyears <- county_grandtots_bothyears %>% 
+  mutate(
+    diff_requested = na_if(total_requested_2020, total_returned_2020),
+    pctchg_requested = na_if(total_requested_2020, total_returned_2020),
+    total_requested_2020 = na_if(total_requested_2020, total_returned_2020)
+  )
 
 #save output to file
 filename_countytots <- paste0("output/county_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
