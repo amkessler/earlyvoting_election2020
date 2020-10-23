@@ -1,6 +1,7 @@
 library(tidyverse)
 library(janitor)
 library(lubridate)
+library(readxl)
 library(writexl)
 library(tidycensus)
 options(scipen = 999)
@@ -15,6 +16,9 @@ state_latest <- readRDS("processed_data/state_latest.rds")
 county_latest <- readRDS("processed_data/county_latest.rds")
 state_2016 <- readRDS("processed_data/state_2016.rds")
 county_2016 <- readRDS("processed_data/county_2016.rds")
+
+# bring in lookup table for key states (prez battlegrounds and key senate races)
+keystates_lookup <- read_excel("processed_data/keystates_elex2020.xlsx")
 
 
 #filter all the datasets based on days before election desired
@@ -105,7 +109,7 @@ write_xlsx(natl_grandtots_bothyears, filename_natltots)
 
 
 
-### STATE LEVEL ####
+### STATE ####
 
 #calculate state grand totals for early voting
 state_grandtots_bothyears <- state_bothcycles %>% 
@@ -133,7 +137,7 @@ write_xlsx(state_grandtots_bothyears, filename_statetots)
 
 
 
-### COUNTY LEVEL ####
+### COUNTY ####
 
 # calculate county grand totals for early voting
 county_grandtots_bothyears <- county_bothcycles %>% 
@@ -183,6 +187,49 @@ write_xlsx(county_grandtots_bothyears, filename_countytots)
 
 
 #### DEMOGRAPHIC BREAKDOWNS ##### -----------------------------------------------------------
+
+#for this analysis we'll just focus on the key states in the prez and senate races
+#we imported the lookup table at the very top, let's take another look
+keystates_lookup
+
+#for now we'll use use prez battlegrounds, create a vector to filer on
+keystates_prez_vector <- keystates_lookup %>% 
+  filter(office == "P") %>% 
+  distinct(state) %>% 
+  pull()
+
+#use those values to create a subset of the states table
+state_keyprezonly_bothcycles <- state_bothcycles %>% 
+  filter(state %in% keystates_prez_vector)
+
+state_keyprezonly_bothcycles
+
+
+
+
+### GENDER ####
+state_keyprezonly_bothcycles %>% 
+  group_by(cycle, state, gender) %>% 
+  summarise(
+    total_requested = sum(ballots_requested, na.rm = TRUE),
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned)) %>% 
+  mutate(
+    diff_requested = total_requested_2020 - total_requested_2016,
+    pctchg_requested = round_half_up((total_requested_2020 - total_requested_2016) / total_requested_2016 * 100, 2),
+    diff_returned = total_returned_2020 - total_returned_2016,
+    pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+  ) 
+
+
+
+
+state_grandtots_bothyears
+
+
+
+
 
 state_latest %>% 
   filter(state == "PA") %>% 
