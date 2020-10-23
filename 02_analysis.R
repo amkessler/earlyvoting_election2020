@@ -192,7 +192,8 @@ write_xlsx(county_grandtots_bothyears, filename_countytots)
 
 
 
-#### DEMOGRAPHIC BREAKDOWNS ##### 
+
+#### DEMOGRAPHIC BREAKDOWNS ##### -----------------------------------------------------------
 
 state_latest %>% 
   filter(state == "PA") %>% 
@@ -220,3 +221,47 @@ state_latest %>%
   )
 
 
+
+### trying another approach to cycle comparison, appending instead of joining
+state_latest <- state_latest %>% 
+  mutate(
+    cycle = "2020"
+  ) %>% 
+  select(cycle, everything())
+
+
+state_2016 <- state_2016 %>% 
+  mutate(
+    cycle = "2016"
+  ) %>% 
+  select(cycle, everything())
+
+#combine
+state_bothcycles <- bind_rows(state_latest, state_2016)
+
+state_bothcycles
+
+
+### now we'll calculate grand totals per year
+grandtest <- state_bothcycles %>% 
+  group_by(cycle) %>% 
+  summarise(
+    total_requested = sum(ballots_requested, na.rm = TRUE),
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) 
+
+grandtest
+
+#reshape
+grandtest %>% 
+  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
+
+
+# states
+state_bothcycles %>% 
+  group_by(cycle, state) %>% 
+  summarise(
+    total_requested = sum(ballots_requested, na.rm = TRUE),
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
