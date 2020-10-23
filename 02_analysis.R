@@ -208,7 +208,9 @@ state_keyprezonly_bothcycles
 
 
 ### GENDER ####
-state_keyprezonly_bothcycles %>% 
+
+#growth from last cycle
+gender_states <- state_keyprezonly_bothcycles %>% 
   group_by(cycle, state, gender) %>% 
   summarise(
     total_requested = sum(ballots_requested, na.rm = TRUE),
@@ -222,7 +224,8 @@ state_keyprezonly_bothcycles %>%
     pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
   ) 
 
-
+gender_states %>% 
+  select(state, gender, pctchg_requested, pctchg_returned)
 
 
 state_grandtots_bothyears
