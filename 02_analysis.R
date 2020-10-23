@@ -17,7 +17,6 @@ state_2016 <- readRDS("processed_data/state_2016.rds")
 county_2016 <- readRDS("processed_data/county_2016.rds")
 
 
-
 #filter all the datasets based on days before election desired
 state_latest <- state_latest %>% 
   filter(days_to_election >= before_election_choice)
@@ -32,30 +31,62 @@ county_2016 <- county_2016 %>%
   filter(days_to_election >= before_election_choice)
 
 
+#add new column to use for cycle identification, then combine records
+state_latest <- state_latest %>% 
+  mutate(
+    cycle = "2020"
+  ) %>% 
+  select(cycle, everything())
 
-##### GRAND TOTAL COUNTS AND COMPARISONS ####-------------------------------------------------
+state_2016 <- state_2016 %>% 
+  mutate(
+    cycle = "2016"
+  ) %>% 
+  select(cycle, everything())
+
+#combine
+state_bothcycles <- bind_rows(state_latest, state_2016)
+state_bothcycles
+
+#now for counties
+county_latest <- county_latest %>% 
+  mutate(
+    cycle = "2020"
+  ) %>% 
+  select(cycle, everything())
+
+county_2016 <- county_2016 %>% 
+  mutate(
+    cycle = "2016"
+  ) %>% 
+  select(cycle, everything())
+
+#combine
+county_bothcycles <- bind_rows(county_latest, county_2016)
+county_bothcycles
+
+
+
+
+
+### SUMMARY TOP LEVEL BREAKDOWNS ##### ---------------------------------------------
+
 
 ### NATIONAL ####
 
-#calculate a national total for early voting
-#2020
-natl_grandtots_2020 <- state_latest %>% 
-  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
-            total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
-            )
+### calculate grand totals nationally for each cycle
+natl_grandtots_bothyears <- state_bothcycles %>% 
+  group_by(cycle) %>% 
+  summarise(
+    total_requested = sum(ballots_requested, na.rm = TRUE),
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) 
 
-natl_grandtots_2020
+natl_grandtots_bothyears
 
-#2016
-natl_grandtots_2016 <- state_2016 %>% 
-  summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
-            total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
-  )
-
-natl_grandtots_2016
-
-#combine years into one table
-natl_grandtots_bothyears <- bind_cols(natl_grandtots_2016, natl_grandtots_2020)
+#reshape to wide format to allow for comparison calculations
+natl_grandtots_bothyears <- natl_grandtots_bothyears %>% 
+  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
 
 #calculate change
 natl_grandtots_bothyears <- natl_grandtots_bothyears %>% 
@@ -76,36 +107,14 @@ write_xlsx(natl_grandtots_bothyears, filename_natltots)
 
 ### STATE LEVEL ####
 
-state_latest %>%
-  group_by(state) %>%
-  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE)
-  )
-
 #calculate state grand totals for early voting
-#2020
-state_grandtots_2020 <- state_latest %>% 
-  group_by(state) %>%
-  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
-            total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
-  )
-
-state_grandtots_2020
-
-#2016
-state_grandtots_2016 <- state_2016 %>% 
-  group_by(state) %>%
-  summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
-            total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
-  )
-
-state_grandtots_2016
-
-#join years into one table
-state_grandtots_bothyears <- left_join(state_grandtots_2020, state_grandtots_2016, by = "state") %>% 
-                                    select(state, total_requested_2016, total_returned_2016, everything())
-
-state_grandtots_bothyears
-
+state_grandtots_bothyears <- state_bothcycles %>% 
+  group_by(cycle, state) %>% 
+  summarise(
+    total_requested = sum(ballots_requested, na.rm = TRUE),
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
 
 #calculate change
 state_grandtots_bothyears <- state_grandtots_bothyears %>% 
@@ -124,39 +133,18 @@ write_xlsx(state_grandtots_bothyears, filename_statetots)
 
 
 
-
 ### COUNTY LEVEL ####
 
-county_latest %>%
-  group_by(countyfips) %>%
-  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE)
-  )
-
-#calculate county grand totals for early voting
-#2020
-county_grandtots_2020 <- county_latest %>% 
-  group_by(countyfips) %>%
-  summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
-            total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
-  )
-
-county_grandtots_2020
-
-#2016
-county_grandtots_2016 <- county_2016 %>% 
-  group_by(countyfips) %>%
-  summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
-            total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
-  )
-
-county_grandtots_2016
-
-#join years into one table
-county_grandtots_bothyears <- left_join(county_grandtots_2020, county_grandtots_2016, by = "countyfips") %>% 
-  select(countyfips, total_requested_2016, total_returned_2016, everything())
+# calculate county grand totals for early voting
+county_grandtots_bothyears <- county_bothcycles %>% 
+  group_by(cycle, countyfips) %>% 
+  summarise(
+    total_requested = sum(ballots_requested, na.rm = TRUE),
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
 
 county_grandtots_bothyears
-
 
 #calculate change
 county_grandtots_bothyears <- county_grandtots_bothyears %>% 
@@ -193,6 +181,7 @@ write_xlsx(county_grandtots_bothyears, filename_countytots)
 
 
 
+
 #### DEMOGRAPHIC BREAKDOWNS ##### -----------------------------------------------------------
 
 state_latest %>% 
@@ -201,11 +190,11 @@ state_latest %>%
   summarise(
     total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
     total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
-    ) %>% 
+  ) %>% 
   mutate(
     pcttotal_requested = round_half_up(total_requested_2020 / sum(total_requested_2020) * 100, 2),
     pcttotal_returned = round_half_up(total_returned_2020 / sum(total_returned_2020) * 100, 2)
-    )
+  )
 
 
 state_latest %>% 
@@ -222,46 +211,184 @@ state_latest %>%
 
 
 
-### trying another approach to cycle comparison, appending instead of joining
-state_latest <- state_latest %>% 
-  mutate(
-    cycle = "2020"
-  ) %>% 
-  select(cycle, everything())
 
 
-state_2016 <- state_2016 %>% 
-  mutate(
-    cycle = "2016"
-  ) %>% 
-  select(cycle, everything())
-
-#combine
-state_bothcycles <- bind_rows(state_latest, state_2016)
-
-state_bothcycles
 
 
-### now we'll calculate grand totals per year
-grandtest <- state_bothcycles %>% 
-  group_by(cycle) %>% 
-  summarise(
-    total_requested = sum(ballots_requested, na.rm = TRUE),
-    total_returned = sum(ballots_returned, na.rm = TRUE)
-  ) 
-
-grandtest
-
-#reshape
-grandtest %>% 
-  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
 
 
-# states
-state_bothcycles %>% 
-  group_by(cycle, state) %>% 
-  summarise(
-    total_requested = sum(ballots_requested, na.rm = TRUE),
-    total_returned = sum(ballots_returned, na.rm = TRUE)
-  ) %>% 
-  pivot_wider(names_from = cycle, values_from = c(total_requested, total_returned))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Old code using joins from previous attempt before refactoring
+# 
+# ### NATIONAL ####
+# 
+# #calculate a national total for early voting
+# #2020
+# natl_grandtots_2020 <- state_latest %>% 
+#   summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+#             total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+#   )
+# 
+# natl_grandtots_2020
+# 
+# #2016
+# natl_grandtots_2016 <- state_2016 %>% 
+#   summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
+#             total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
+#   )
+# 
+# natl_grandtots_2016
+# 
+# #combine years into one table
+# natl_grandtots_bothyears <- bind_cols(natl_grandtots_2016, natl_grandtots_2020)
+# 
+# #calculate change
+# natl_grandtots_bothyears <- natl_grandtots_bothyears %>% 
+#   mutate(
+#     diff_requested = total_requested_2020 - total_requested_2016,
+#     pctchg_requested = round_half_up((total_requested_2020 - total_requested_2016) / total_requested_2016 * 100, 2),
+#     diff_returned = total_returned_2020 - total_returned_2016,
+#     pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+#   ) 
+# 
+# natl_grandtots_bothyears
+# 
+# #save output to file
+# filename_natltots <- paste0("output/natl_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
+# write_xlsx(natl_grandtots_bothyears, filename_natltots)
+# 
+# 
+# 
+# ### STATE LEVEL ####
+# 
+# state_latest %>%
+#   group_by(state) %>%
+#   summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE)
+#   )
+# 
+# #calculate state grand totals for early voting
+# #2020
+# state_grandtots_2020 <- state_latest %>% 
+#   group_by(state) %>%
+#   summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+#             total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+#   )
+# 
+# state_grandtots_2020
+# 
+# #2016
+# state_grandtots_2016 <- state_2016 %>% 
+#   group_by(state) %>%
+#   summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
+#             total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
+#   )
+# 
+# state_grandtots_2016
+# 
+# #join years into one table
+# state_grandtots_bothyears <- left_join(state_grandtots_2020, state_grandtots_2016, by = "state") %>% 
+#   select(state, total_requested_2016, total_returned_2016, everything())
+# 
+# state_grandtots_bothyears
+# 
+# 
+# #calculate change
+# state_grandtots_bothyears <- state_grandtots_bothyears %>% 
+#   mutate(
+#     diff_requested = total_requested_2020 - total_requested_2016,
+#     pctchg_requested = round_half_up((total_requested_2020 - total_requested_2016) / total_requested_2016 * 100, 2),
+#     diff_returned = total_returned_2020 - total_returned_2016,
+#     pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+#   ) 
+# 
+# state_grandtots_bothyears
+# 
+# #save output to file
+# filename_statetots <- paste0("output/state_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
+# write_xlsx(state_grandtots_bothyears, filename_statetots)
+# 
+# 
+# 
+# 
+# ### COUNTY LEVEL ####
+# 
+# county_latest %>%
+#   group_by(countyfips) %>%
+#   summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE)
+#   )
+# 
+# #calculate county grand totals for early voting
+# #2020
+# county_grandtots_2020 <- county_latest %>% 
+#   group_by(countyfips) %>%
+#   summarise(total_requested_2020 = sum(ballots_requested, na.rm = TRUE),
+#             total_returned_2020 = sum(ballots_returned, na.rm = TRUE)
+#   )
+# 
+# county_grandtots_2020
+# 
+# #2016
+# county_grandtots_2016 <- county_2016 %>% 
+#   group_by(countyfips) %>%
+#   summarise(total_requested_2016 = sum(ballots_requested, na.rm = TRUE),
+#             total_returned_2016 = sum(ballots_returned, na.rm = TRUE)
+#   )
+# 
+# county_grandtots_2016
+# 
+# #join years into one table
+# county_grandtots_bothyears <- left_join(county_grandtots_2020, county_grandtots_2016, by = "countyfips") %>% 
+#   select(countyfips, total_requested_2016, total_returned_2016, everything())
+# 
+# county_grandtots_bothyears
+# 
+# 
+# #calculate change
+# county_grandtots_bothyears <- county_grandtots_bothyears %>% 
+#   mutate(
+#     diff_requested = total_requested_2020 - total_requested_2016,
+#     pctchg_requested = round_half_up((total_requested_2020 - total_requested_2016) / total_requested_2016 * 100, 2),
+#     diff_returned = total_returned_2020 - total_returned_2016,
+#     pctchg_returned = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+#   ) 
+# 
+# county_grandtots_bothyears
+# 
+# #bring in fips lookup table from tidycensus package to add names etc to accompany fips codes
+# head(fips_codes)
+# 
+# fips_lookuptable <- fips_codes %>% 
+#   as_tibble() %>% 
+#   mutate(
+#     countyfips = paste0(state_code, county_code)
+#   ) %>% 
+#   select(countyfips, everything(), -state_code, -county_code)
+# 
+# #join to main table
+# county_grandtots_bothyears <- inner_join(fips_lookuptable, county_grandtots_bothyears, by = "countyfips")
+# 
+# county_grandtots_bothyears
+# 
+# 
+# #save output to file
+# filename_countytots <- paste0("output/county_grandtots_bothyears_", before_election_choice, "daysout.xlsx")
+# write_xlsx(county_grandtots_bothyears, filename_countytots)
+# 
+# 
