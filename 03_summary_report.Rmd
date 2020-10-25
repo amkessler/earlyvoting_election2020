@@ -95,7 +95,7 @@ head(gender_states)
 ```
 
 
-Estimated growth in male vs. female early voters 
+Growth in male vs. female early voters 
 
 ```{r, echo=FALSE}
 
@@ -124,24 +124,23 @@ gender_states %>%
 
 ```{r, echo=FALSE}
 
-#create our own boiled down age groupings for this analysis portion
-votedata <- votedata %>% 
-  mutate(
-    age = str_trim(age),
-    age_akgroup = case_when(
-                    age == "18-21" ~ "Under 30",
-                    age == "22-29" ~ "Under 30",
-                    age == "30-39" ~ "30-49 years",
-                    age == "40-49" ~ "30-49 years",
-                    age == "50-64" ~ "50-54 years",
-                    age == "50-64" ~ "50-54 years",
-                    age == "65+" ~ "65 and older",
-                    TRUE ~ "unknown"
-    )
-  )
-
-votedata %>% 
-  count(age_akgroup)
+# #create our own boiled down age groupings for this analysis portion
+# votedata <- votedata %>% 
+#   mutate(
+#     age = str_trim(age),
+#     age_akgroup = case_when(
+#                     age == "18-21" ~ "Under 30",
+#                     age == "22-29" ~ "Under 30",
+#                     age == "30-39" ~ "30-49 years",
+#                     age == "40-49" ~ "30-49 years",
+#                     age == "50-64" ~ "50-54 years",
+#                     age == "65+" ~ "65 and older",
+#                     TRUE ~ "unknown"
+#     )
+#   )
+# 
+# votedata %>% 
+#   count(age_akgroup)
 
 ```
 
@@ -151,14 +150,13 @@ votedata %>%
 votedata
 
 votedata %>% 
-  group_by(cycle, state, age_akgroup) %>% 
+  group_by(cycle, state, age) %>% 
   summarise(
     total_returned = sum(ballots_returned, na.rm = TRUE)
   ) %>% 
   ungroup() %>% 
   group_by(state) %>% 
-  mutate(Percentage=total_returned/sum(total_returned)*100) %>% 
-  arrange(state, age_akgroup)
+  mutate(Percentage=total_returned/sum(total_returned)*100)
     
   # ) %>% 
   # pivot_wider(names_from = c(cycle, gender), values_from = total_returned) %>% 
@@ -168,4 +166,110 @@ votedata %>%
 ```
 
 
+```{r, echo=FALSE}
+
+
+#calculate growth for each gender group
+age_states <- votedata %>% 
+  group_by(cycle, state, age) %>% 
+  summarise(
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(names_from = c(cycle, age), values_from = total_returned) %>% 
+  clean_names() %>% 
+  mutate(
+    diff_18_21 = x2020_18_21 - x2016_18_21,
+    pctchg_18_21 = round_half_up((x2020_18_21 - x2016_18_21) / x2016_18_21 * 100, 2),
+    
+    diff_22_29 = x2020_22_29 - x2016_22_29,
+    pctchg_22_29 = round_half_up((x2020_22_29 - x2016_22_29) / x2016_22_29 * 100, 2),
+    
+     diff_30_39 = x2020_30_39 - x2016_30_39,
+    pctchg_30_39 = round_half_up((x2020_30_39 - x2016_30_39) / x2016_30_39 * 100, 2),
+    
+     diff_40_49 = x2020_40_49 - x2016_40_49,
+    pctchg_40_49 = round_half_up((x2020_40_49 - x2016_40_49) / x2016_40_49 * 100, 2),
+    
+     diff_50_64 = x2020_50_64 - x2016_50_64,
+    pctchg_50_64 = round_half_up((x2020_50_64 - x2016_50_64) / x2016_50_64 * 100, 2),
+    
+     diff_65 = x2020_65 - x2016_65,
+    pctchg_65 = round_half_up((x2020_65 - x2016_65) / x2016_65 * 100, 2),
+    
+     diff_unknown = x2020_unknown - x2016_unknown,
+    pctchg_unknown = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 2),
+    
+  ) 
+
+
+head(age_states)
+
+```
+
+Growth in male vs. female early voters 
+
+```{r, echo=FALSE}
+
+age_states %>% 
+  select(
+    state,
+    "difference from 2016 in ballots cast by female voters" = diff_female,
+    "difference from 2016 in ballots cast by male voters" = diff_male,
+    "pct change from 2016 in ballots cast by female voters" = pctchg_female,
+    "pct change from 2016 in ballots cast by male voters" = pctchg_male
+
+  )
+
+
+```
+
+
+
+
+```{r, echo=FALSE}
+
+
+
+
+```
+
+
+```{r, echo=FALSE}
+
+
+
+
+```
+
+
+```{r, echo=FALSE}
+
+
+
+
+```
+
+
+```{r, echo=FALSE}
+
+
+
+
+```
+
+
+```{r, echo=FALSE}
+
+
+
+
+```
+
+
+```{r, echo=FALSE}
+
+
+
+
+```
 
