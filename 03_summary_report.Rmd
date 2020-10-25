@@ -69,6 +69,11 @@ state_keysenateonly_bothcycles
 #select which filtered version of the full dataset to use below, or create new one
 votedata <- state_keyprezonly_bothcycles
 
+#note: something strange happening with PA. Will troubleshoot and until then just taking it out for now
+votedata <- votedata %>% 
+  filter(state != "PA")
+
+
 
 ```
 
@@ -81,6 +86,11 @@ Details on ballots cast in selected states follow:
 ## Battleground State Totals
 
 ```{r, echo=FALSE}
+
+#note: something strange happening with PA. Will troubleshoot and until then just taking it out for now
+state_grandtots_bothyears <- state_grandtots_bothyears %>% 
+  filter(state != "PA")
+
 
 state_grandtots_bothyears %>% 
   filter(state %in% keystates_prez_vector) %>% 
@@ -188,7 +198,30 @@ age_states <- votedata %>%
 ```
 
 
-Growth in early voters by age groups to date, compared with the same point before the 2016 election
+Growth in early voters by age groups to date, compared with the same point before the 2016 election. The table below shows the **percent change** in 2020 compared with 2016 at the same point before the election.
+
+```{r, echo=FALSE}
+
+
+#for display 
+age_states %>% 
+  select(state, age, pctchg) %>% 
+  filter(age != "Unknown") %>% 
+  mutate(pctchg = round_half_up(pctchg, 1)) %>% 
+  pivot_wider(names_from = age, values_from = pctchg) %>%
+  kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
+  kable_styling(bootstrap_options = c("striped"),
+                full_width = F,
+                position = "left") %>%
+  column_spec(1, bold = T)
+
+
+
+```
+
+One thing to note is that for the enormous jumps in 18-21 year old percentages, they almost all start from a very low base, in some instances only a few hundred early votes last time by young voters in that age bracket. It's still notable of course just how much that group has been gangbusters voting early this time, but something to keep in mind as the percentages themselves are sky-high mainly because almost no one voted early in 2016.  
+  
+Here below is an expanded table showing the particulars behind those percent changes around age brackets in each state.   
 
 ```{r, echo=FALSE}
 
@@ -212,14 +245,6 @@ age_states %>%
 ```
 
 
-
-
-```{r, echo=FALSE}
-
-
-
-
-```
 
 
 ```{r, echo=FALSE}
