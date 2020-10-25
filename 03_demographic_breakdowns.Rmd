@@ -1,0 +1,31 @@
+---
+title: "Demographics and Party Breakdowns"
+author: "Aaron Kessler"
+date: "10/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(readxl)
+library(writexl)
+library(tidycensus)
+options(scipen = 999)
+
+#load saved file with key prez states only
+state_keyprezonly_bothcycles <- readRDS("processed_data/state_keyprezonly_bothcycles.rds")
+
+```
+
+## R Markdown
+
+
+```{r pressure, echo=FALSE}
+
+
+```
+
