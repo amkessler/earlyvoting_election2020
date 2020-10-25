@@ -222,6 +222,8 @@ state_keyprezonly_bothcycles <- state_bothcycles %>%
 
 state_keyprezonly_bothcycles
 
+#save to file
+saveRDS(state_keyprezonly_bothcycles, "processed_data/state_keyprezonly_bothcycles.rds")
 
 
 
