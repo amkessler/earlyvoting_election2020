@@ -184,19 +184,19 @@ age_states <- votedata %>%
     diff_22_29 = x2020_22_29 - x2016_22_29,
     pctchg_22_29 = round_half_up((x2020_22_29 - x2016_22_29) / x2016_22_29 * 100, 2),
     
-     diff_30_39 = x2020_30_39 - x2016_30_39,
+    diff_30_39 = x2020_30_39 - x2016_30_39,
     pctchg_30_39 = round_half_up((x2020_30_39 - x2016_30_39) / x2016_30_39 * 100, 2),
     
-     diff_40_49 = x2020_40_49 - x2016_40_49,
+    diff_40_49 = x2020_40_49 - x2016_40_49,
     pctchg_40_49 = round_half_up((x2020_40_49 - x2016_40_49) / x2016_40_49 * 100, 2),
     
-     diff_50_64 = x2020_50_64 - x2016_50_64,
+    diff_50_64 = x2020_50_64 - x2016_50_64,
     pctchg_50_64 = round_half_up((x2020_50_64 - x2016_50_64) / x2016_50_64 * 100, 2),
     
-     diff_65 = x2020_65 - x2016_65,
+    diff_65 = x2020_65 - x2016_65,
     pctchg_65 = round_half_up((x2020_65 - x2016_65) / x2016_65 * 100, 2),
     
-     diff_unknown = x2020_unknown - x2016_unknown,
+    diff_unknown = x2020_unknown - x2016_unknown,
     pctchg_unknown = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 2),
     
   ) 
@@ -210,16 +210,25 @@ Growth in male vs. female early voters
 
 ```{r, echo=FALSE}
 
-age_states %>% 
+age_states_fordisplay <- age_states %>% 
   select(
     state,
-    "difference from 2016 in ballots cast by female voters" = diff_female,
-    "difference from 2016 in ballots cast by male voters" = diff_male,
-    "pct change from 2016 in ballots cast by female voters" = pctchg_female,
-    "pct change from 2016 in ballots cast by male voters" = pctchg_male
+    "difference in ballots cast by age 18-21" = diff_18_21,
+    "pct change in ballots cast by age 18-21" = pctchg_18_21,
+    "difference in ballots cast by age 22-29" = diff_22_29,
+    "pct change in ballots cast by age 22-29" = pctchg_22_29,
+    "difference in ballots cast by age 30-39" = diff_30_39,
+    "pct change in ballots cast by age 30-39" = pctchg_30_39,
+    "difference in ballots cast by age 40-49" = diff_40_49,
+    "pct change in ballots cast by age 40-49" = pctchg_40_49,
+    "difference in ballots cast by age 50-64" = diff_50_64,
+    "pct change in ballots cast by age 50-64" = pctchg_50_64,
+    "difference in ballots cast by age 65+" = diff_65,
+    "pct change in ballots cast by age 65+" = pctchg_65,
 
   )
 
+age_states_fordisplay
 
 ```
 
