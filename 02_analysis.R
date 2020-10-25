@@ -49,6 +49,9 @@ state_2016 <- state_2016 %>%
 state_bothcycles <- bind_rows(state_latest, state_2016)
 state_bothcycles
 
+saveRDS(state_bothcycles, "processed_data/state_bothcycles.rds")
+
+
 #now for counties
 county_latest <- county_latest %>% 
   mutate(
@@ -66,7 +69,7 @@ county_2016 <- county_2016 %>%
 county_bothcycles <- bind_rows(county_latest, county_2016)
 county_bothcycles
 
-
+saveRDS(county_bothcycles, "processed_data/county_bothcycles.rds")
 
 
 
