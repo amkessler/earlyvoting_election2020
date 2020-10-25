@@ -37,9 +37,19 @@ Details on ballots cast in selected states follow:
 
 ```{r, echo=FALSE}
 
+state_grandtots_bothyears %>% 
+  filter(state %in% keystates_prez_vector) %>% 
+  select("ballots cast at this point 2016" = total_returned_2016,
+         "ballots cast at this point 2020" = total_returned_2016,
+         difference = diff_returned,
+         "percent change" = pctchg_returned)
+
+
 ```
 
 ```{r, echo=FALSE}
+
+
 
 ```
 
