@@ -16,16 +16,37 @@ library(writexl)
 library(tidycensus)
 options(scipen = 999)
 
-#load saved file with key prez states only
-state_keyprezonly_bothcycles <- readRDS("processed_data/state_keyprezonly_bothcycles.rds")
+#run processing script
+source("02_analysis.R")
+
+#pull national votes cast/return number for use below
+value_national_2016 <- natl_grandtots_bothyears %>% pull(x2016)
+value_national_2020 <- natl_grandtots_bothyears %>% pull(x2020)
+value_national_pctchg <- natl_grandtots_bothyears %>% pull(pctchg_returned)
+
 
 ```
 
+Bloomberg is partnering with Catalist, a data company that works with Democrats and others, to compile counts of ballots cast before Election Day, either early in-person or by-mail. The data is being provided each weekday morning.
+
+As of the morning of `r format(Sys.Date(), "%B %d, %Y")`, at least **`r format(value_national_2020, big.mark=",")`** votes have been cast early or by mail nationwide, according to data collected by Catalist. This represents a **`r format(value_national_pctchg)`** percent change from 2016, when `r format(value_national_2016, big.mark=",")` votes were cast at this point.  
+  
+Details on ballots cast in selected states follow:
+
+## Battleground State Totals
+
+```{r, echo=FALSE}
+
+```
+
+```{r, echo=FALSE}
+
+```
+
+
 ## Gender
 
-Growth from previous cycle
-
-```{r pressure, echo=FALSE}
+```{r, echo=FALSE}
 
 #calculate growth for each gender group
 gender_states <- state_keyprezonly_bothcycles %>% 
@@ -40,15 +61,30 @@ gender_states <- state_keyprezonly_bothcycles %>%
     pctchg_female = round_half_up((x2020_female - x2016_female) / x2016_female * 100, 2),
     diff_male = x2020_male - x2016_male,
     pctchg_male = round_half_up((x2020_male - x2016_male) / x2016_male * 100, 2),
-    diff_unk = x2020_unknown - x2016_unknown,
-    pctchg_unk = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 2)
+    diff_unknown = x2020_unknown - x2016_unknown,
+    pctchg_unknown = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 2)
   ) 
 
-#add totals for each cycle and difference
-gender_states %>% 
+#add totals for each cycle and pct totals
+gender_states <- gender_states %>% 
   mutate(
-    
+    x2016_total = x2016_female + x2016_male + x2016_unknown,
+    x2020_total = x2020_female + x2020_male + x2020_unknown,
+    x2016_pcttotal_female = round_half_up(x2016_female / x2016_total * 100, 2),
+    x2020_pcttotal_female = round_half_up(x2020_female / x2020_total * 100, 2),
+    x2016_pcttotal_male = round_half_up(x2016_male / x2016_total * 100, 2),
+    x2020_pcttotal_male = round_half_up(x2020_male / x2020_total * 100, 2),
+    x2016_pcttotal_unknown = round_half_up(x2016_unknown / x2016_total * 100, 2),
+    x2020_pcttotal_unknown = round_half_up(x2020_unknown / x2020_total * 100, 2)
   )
 
+head(gender_states)
+
 ```
+
+
+
+
+
+
 
