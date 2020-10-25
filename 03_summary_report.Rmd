@@ -86,7 +86,7 @@ state_grandtots_bothyears %>%
   filter(state %in% keystates_prez_vector) %>% 
   select(state,
     "ballots cast at this point 2016" = total_returned_2016,
-    "ballots cast at this point 2020" = total_returned_2016,
+    "ballots cast to date 2020" = total_returned_2016,
     difference = diff_returned,
     "percent change" = pctchg_returned) %>% 
   kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
