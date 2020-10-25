@@ -14,15 +14,58 @@ library(lubridate)
 library(readxl)
 library(writexl)
 library(tidycensus)
+library(kableExtra)
 options(scipen = 999)
 
-#run processing script
-source("02_analysis.R")
+#run processing script to refresh with latest data as needed each day
+# source("02_analysis.R")
+
+# alternatively, use saved versions of files already created (much faster when new updated data not needed)
+state_bothcycles <- readRDS("processed_data/state_bothcycles.rds")
+# county_bothcycles <- readRDS("processed_data/county_bothcycles.rds")
+natl_grandtots_bothyears <- readRDS("processed_data/natl_grandtots_bothyears.rds")
+state_grandtots_bothyears <- readRDS("processed_data/state_grandtots_bothyears.rds")
+# county_grandtots_bothyears <- readRDS("processed_data/county_grandtots_bothyears.rds")
+
+# load lookup file with key state designations for prez and senate
+keystates_lookup <- read_excel("processed_data/keystates_elex2020.xlsx")
+
 
 #pull national votes cast/return number for use below
 value_national_2016 <- natl_grandtots_bothyears %>% pull(x2016)
 value_national_2020 <- natl_grandtots_bothyears %>% pull(x2020)
 value_national_pctchg <- natl_grandtots_bothyears %>% pull(pctchg_returned)
+
+#we'll use use prez battlegrounds, create a vector to filer on
+keystates_prez_vector <- keystates_lookup %>% 
+  filter(office == "P") %>% 
+  distinct(state) %>% 
+  pull()
+
+#use those values to create a subset of the states table
+state_keyprezonly_bothcycles <- state_bothcycles %>% 
+  filter(state %in% keystates_prez_vector)
+
+state_keyprezonly_bothcycles
+
+
+#we'll use use senate key races, create a vector to filer on
+keystates_senate_vector <- keystates_lookup %>% 
+  filter(office == "S") %>% 
+  distinct(state) %>% 
+  pull()
+
+#use those values to create a subset of the states table
+state_keysenateonly_bothcycles <- state_bothcycles %>% 
+  filter(state %in% keystates_senate_vector)
+
+state_keysenateonly_bothcycles
+
+
+
+#### CHOOSE WHAT FILTERED DATASET TO USE FOR ANALYSIS
+#select which filtered version of the full dataset to use below, or create new one
+votedata <- state_keyprezonly_bothcycles
 
 
 ```
@@ -44,13 +87,6 @@ state_grandtots_bothyears %>%
          difference = diff_returned,
          "percent change" = pctchg_returned)
 
-
-```
-
-```{r, echo=FALSE}
-
-#select which filtered version of the full dataset to use below, or create new one
-votedata <- state_keyprezonly_bothcycles
 
 ```
 
@@ -113,13 +149,6 @@ gender_states %>%
 ```
 
 
-```{r, echo=FALSE}
-
-
-
-```
-
-
 ## Age Groups
 
 
@@ -145,10 +174,11 @@ age_states
 ```
 
 
-Growth in early voters by age groups since 2016
+Growth in early voters by age groups to date, compared with the same point before the 2016 election
 
 ```{r, echo=FALSE}
 
+#for display 
 age_states %>% 
   select(
     state,
@@ -157,7 +187,12 @@ age_states %>%
     "ballots cast so far in 2020" = x2020,
     "difference" = diff,
     "pct change" = pctchg
-  )
+  ) %>% 
+  kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
+  kable_styling(bootstrap_options = c("striped", "condensed"), 
+                full_width = F,
+                position = "left") %>% 
+  column_spec(1, bold = T)
 
 
 ```
