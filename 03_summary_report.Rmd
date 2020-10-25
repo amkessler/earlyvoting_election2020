@@ -127,7 +127,7 @@ gender_states %>%
 #create our own boiled down age groupings for this analysis portion
 votedata <- votedata %>% 
   mutate(
-    age = str_squish(age),
+    age = str_trim(age),
     age_akgroup = case_when(
                     age == "18-21" ~ "Under 30",
                     age == "22-29" ~ "Under 30",
@@ -141,7 +141,7 @@ votedata <- votedata %>%
   )
 
 votedata %>% 
-  count(age)
+  count(age_akgroup)
 
 ```
 
