@@ -1,5 +1,5 @@
 ---
-title: "Demographics and Party Breakdowns"
+title: "2020 Election Early Voting Summaries and Demograhpics"
 author: "Aaron Kessler"
 date: "10/25/2020"
 output: html_document
