@@ -27,22 +27,28 @@ Growth from previous cycle
 
 ```{r pressure, echo=FALSE}
 
-#growth from last cycle
-gender_states <- 
-  
-state_keyprezonly_bothcycles %>% 
+#calculate growth for each gender group
+gender_states <- state_keyprezonly_bothcycles %>% 
   group_by(cycle, state, gender) %>% 
   summarise(
     total_returned = sum(ballots_returned, na.rm = TRUE)
   ) %>% 
   pivot_wider(names_from = c(cycle, gender), values_from = total_returned) %>% 
+  clean_names() %>% 
   mutate(
-    diff_female = total_returned_2020 - total_returned_2016,
-    pctchg_female = round_half_up((total_returned_2020 - total_returned_2016) / total_returned_2016 * 100, 2)
+    diff_female = x2020_female - x2016_female,
+    pctchg_female = round_half_up((x2020_female - x2016_female) / x2016_female * 100, 2),
+    diff_male = x2020_male - x2016_male,
+    pctchg_male = round_half_up((x2020_male - x2016_male) / x2016_male * 100, 2),
+    diff_unk = x2020_unknown - x2016_unknown,
+    pctchg_unk = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 2)
   ) 
 
+#add totals for each cycle and difference
 gender_states %>% 
-  select(state, gender, pctchg_requested, pctchg_returned)
+  mutate(
+    
+  )
 
 ```
 
