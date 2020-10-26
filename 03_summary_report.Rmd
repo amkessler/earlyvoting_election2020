@@ -1,5 +1,5 @@
 ---
-title: "2020 Election Early Voting Summaries and Demographics"
+title: "2020 Election Early Voting Summaries/Breakdowns"
 author: "Aaron Kessler"
 date: "10/25/2020"
 output:
@@ -84,7 +84,7 @@ Bloomberg is partnering with Catalist, a data company that works with Democrats 
 
 As of the morning of `r format(Sys.Date(), "%B %d, %Y")`, at least **`r format(value_national_2020, big.mark=",")`** votes have been cast early or by mail nationwide, according to data collected by Catalist. This represents a **`r format(value_national_pctchg)`** percent change from 2016, when `r format(value_national_2016, big.mark=",")` votes were cast at this point.  
   
-Details on ballots cast in selected states follow:  
+Details on ballots cast in selected states follow... 
   
 ## Battleground State Totals
 
@@ -137,7 +137,7 @@ party_states <- votedata %>%
 ```
 
 
-Growth in early voters by their party affiliation to date, compared with the same point before the 2016 election. (Note that some states, such as Texas and Georgia, do not have such affiliations associated with their early voting.)
+Growth in early voters by their party affiliation to date, compared with the same point before the 2016 election. (Note that some states, such as Texas and Georgia, do not report this information associated with their early voting.)
 
 ```{r, echo=FALSE}
 
@@ -170,7 +170,7 @@ party_states %>%
     "ballots cast so far in 2020" = x2020,
     "difference" = diff,
     "pct change" = pctchg
-  ) %>%
+  ) %>% 
   kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
   kable_styling(bootstrap_options = c("striped", "condensed"),
                 full_width = F,
@@ -273,7 +273,7 @@ age_states <- votedata %>%
 ```
 
 
-Growth in early voters by age groups to date, compared with the same point before the 2016 election. The table below shows the **percent change** in 2020 compared with 2016 at the same point before the election.
+Growth in early voters by age groups to date, compared with the same point before the 2016 election. The table below shows the *percent change* in 2020 compared with 2016 at the same point before the election.
 
 ```{r, echo=FALSE}
 
@@ -343,7 +343,7 @@ race_states <- votedata %>%
 ```
 
 
-Growth in early voters by modeled racial groups to date, compared with the same point before the 2016 election. The table below shows the **percent change** in 2020 compared with 2016 at the same point before the election.
+Growth in early voters by modeled racial groups to date, compared with the same point before the 2016 election. The table below shows the *percent change* in 2020 compared with 2016 at the same point before the election.
 
 *(Note: this designation is based on a statistical model by Catalist, it is not taken from state voter registration records themselves.)*
 
