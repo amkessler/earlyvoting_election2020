@@ -101,7 +101,7 @@ state_grandtots_bothyears %>%
   mutate(pctchg_returned = round_half_up(pctchg_returned, 1)) %>% 
   select(state,
     "ballots cast at this point 2016" = total_returned_2016,
-    "ballots cast to date 2020" = total_returned_2016,
+    "ballots cast to date 2020" = total_returned_2020,
     difference = diff_returned,
     "percent change" = pctchg_returned) %>% 
   kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
