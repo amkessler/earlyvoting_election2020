@@ -69,6 +69,7 @@ state_keysenateonly_bothcycles
 #select which filtered version of the full dataset to use below, or create new one
 votedata <- state_keyprezonly_bothcycles
 
+
 #note: something strange happening with PA. Will troubleshoot and until then just taking it out for now
 votedata <- votedata %>% 
   filter(state != "PA")
@@ -94,6 +95,7 @@ state_grandtots_bothyears <- state_grandtots_bothyears %>%
 
 state_grandtots_bothyears %>% 
   filter(state %in% keystates_prez_vector) %>% 
+  mutate(pctchg_returned = round_half_up(pctchg_returned, 1)) %>% 
   select(state,
     "ballots cast at this point 2016" = total_returned_2016,
     "ballots cast to date 2020" = total_returned_2016,
@@ -125,7 +127,7 @@ party_states <- votedata %>%
   clean_names() %>% 
   mutate(
     diff = x2020 - x2016,
-    pctchg = round_half_up((x2020 - x2016) / x2016 * 100, 2)
+    pctchg = round_half_up((x2020 - x2016) / x2016 * 100, 1)
   ) 
 
 # party_states
@@ -196,11 +198,11 @@ gender_states <- votedata %>%
   clean_names() %>% 
   mutate(
     diff_female = x2020_female - x2016_female,
-    pctchg_female = round_half_up((x2020_female - x2016_female) / x2016_female * 100, 2),
+    pctchg_female = round_half_up((x2020_female - x2016_female) / x2016_female * 100, 1),
     diff_male = x2020_male - x2016_male,
-    pctchg_male = round_half_up((x2020_male - x2016_male) / x2016_male * 100, 2),
+    pctchg_male = round_half_up((x2020_male - x2016_male) / x2016_male * 100, 1),
     diff_unknown = x2020_unknown - x2016_unknown,
-    pctchg_unknown = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 2)
+    pctchg_unknown = round_half_up((x2020_unknown - x2016_unknown) / x2016_unknown * 100, 1)
   ) 
 
 #add totals for each cycle and pct totals
@@ -208,12 +210,12 @@ gender_states <- gender_states %>%
   mutate(
     x2016_total = x2016_female + x2016_male + x2016_unknown,
     x2020_total = x2020_female + x2020_male + x2020_unknown,
-    x2016_pcttotal_female = round_half_up(x2016_female / x2016_total * 100, 2),
-    x2020_pcttotal_female = round_half_up(x2020_female / x2020_total * 100, 2),
-    x2016_pcttotal_male = round_half_up(x2016_male / x2016_total * 100, 2),
-    x2020_pcttotal_male = round_half_up(x2020_male / x2020_total * 100, 2),
-    x2016_pcttotal_unknown = round_half_up(x2016_unknown / x2016_total * 100, 2),
-    x2020_pcttotal_unknown = round_half_up(x2020_unknown / x2020_total * 100, 2),
+    x2016_pcttotal_female = round_half_up(x2016_female / x2016_total * 100, 1),
+    x2020_pcttotal_female = round_half_up(x2020_female / x2020_total * 100, 1),
+    x2016_pcttotal_male = round_half_up(x2016_male / x2016_total * 100, 1),
+    x2020_pcttotal_male = round_half_up(x2020_male / x2020_total * 100, 1),
+    x2016_pcttotal_unknown = round_half_up(x2016_unknown / x2016_total * 100, 1),
+    x2020_pcttotal_unknown = round_half_up(x2020_unknown / x2020_total * 100, 1),
     pct_chg_disparity_male_female = abs(pctchg_female - pctchg_male)
   )
 
@@ -247,7 +249,6 @@ gender_states %>%
 
 ### Age Groups
 
-
 ```{r, echo=FALSE}
 
 # votedata
@@ -261,7 +262,7 @@ age_states <- votedata %>%
   clean_names() %>% 
   mutate(
     diff = x2020 - x2016,
-    pctchg = round_half_up((x2020 - x2016) / x2016 * 100, 2)
+    pctchg = round_half_up((x2020 - x2016) / x2016 * 100, 1)
   ) 
 
 # age_states  
@@ -290,14 +291,15 @@ age_states %>%
 
 ```
 
-One thing to note is that for the enormous jumps in 18-21 year old percentages, they almost all start from a very low base, in some instances only a few hundred early votes last time by young voters in that age bracket. It's still notable of course just how much that group has been gangbusters voting early this time, but something to keep in mind as the percentages themselves are sky-high mainly because almost no one voted early in 2016.  
+One thing to note is that for the enormous percentage jumps in 18-21 year old voters, they almost all start from a very low base, in some instances only a few hundred early votes last time by young voters in that age bracket. It's still notable of course just how much that group has been gangbusters voting early this time, but something to keep in mind as the percentages themselves are sky-high mainly because almost no one that age voted early in 2016.  
   
-Here below is an expanded table showing the particulars behind those percent changes around age brackets in each state.   
+Here below is an expanded table showing the particulars behind those percent changes around ages 18-21.   
 
 ```{r, echo=FALSE}
 
 #for display 
 age_states %>% 
+  filter(age == "18-21") %>% 
   select(
     state,
     age,
@@ -315,6 +317,76 @@ age_states %>%
 
 ```
 
+
+### Race
+
+*(Note this designation is based on a statistical model by Catalist, it is not taken from state voting registrations themselves.)*
+
+```{r, echo=FALSE}
+
+# votedata
+
+race_states <- votedata %>% 
+  group_by(cycle, state, race) %>% 
+  summarise(
+    total_returned = sum(ballots_returned, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(names_from = c(cycle), values_from = total_returned) %>% 
+  clean_names() %>% 
+  mutate(
+    diff = x2020 - x2016,
+    pctchg = round_half_up((x2020 - x2016) / x2016 * 100, 1)
+  ) 
+
+# race_states
+  
+```
+
+
+Growth in early voters by modeled racial groups to date, compared with the same point before the 2016 election. The table below shows the **percent change** in 2020 compared with 2016 at the same point before the election.
+
+```{r, echo=FALSE}
+
+
+#for display 
+race_states %>% 
+  select(state, race, pctchg) %>% 
+  filter(race %in% c("Black", "Caucasian", "Hispanic")) %>% 
+  mutate(pctchg = round_half_up(pctchg, 1)) %>% 
+  pivot_wider(names_from = race, values_from = pctchg) %>%
+  kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
+  kable_styling(bootstrap_options = c("striped"),
+                full_width = F,
+                position = "left") %>%
+  column_spec(1, bold = T)
+
+
+
+```
+  
+Here below is an expanded table showing the particulars behind those percent changes around Black, Hispanic and Caucasion early voters.
+
+```{r, echo=FALSE}
+
+#for display 
+race_states %>% 
+  filter(race %in% c("Black", "Caucasian", "Hispanic")) %>% 
+  select(
+    state,
+    race,
+    "ballots cast at this point in 2016" = x2016,
+    "ballots cast so far in 2020" = x2020,
+    "difference" = diff,
+    "pct change" = pctchg
+  ) %>% 
+  kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
+  kable_styling(bootstrap_options = c("striped", "condensed"), 
+                full_width = F,
+                position = "left") %>% 
+  column_spec(1, bold = T)
+
+
+```
 
 
 ```{r, echo=FALSE}
