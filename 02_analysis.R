@@ -17,6 +17,10 @@ county_latest <- readRDS("processed_data/county_latest.rds")
 state_2016 <- readRDS("processed_data/state_2016.rds")
 county_2016 <- readRDS("processed_data/county_2016.rds")
 
+#grand total sum from state_latest
+state_latest %>% 
+  summarise(sum(ballots_returned))
+
 
 #filter all the datasets based on days before election desired
 state_latest <- state_latest %>% 
