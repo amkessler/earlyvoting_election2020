@@ -2,7 +2,9 @@
 title: "2020 Election Early Voting Summaries and Demographics"
 author: "Aaron Kessler"
 date: "10/25/2020"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -232,16 +234,17 @@ Growth in male vs. female early voters
 gender_states %>% 
   select(
     state,
-    "difference from 2016 in ballots cast by female voters" = diff_female,
-    "difference from 2016 in ballots cast by male voters" = diff_male,
-    "pct change from 2016 in ballots cast by female voters" = pctchg_female,
-    "pct change from 2016 in ballots cast by male voters" = pctchg_male
+    "additional female votes cast" = diff_female,
+    "additional male votes cast" = diff_male,
+    "pct change in female voters" = pctchg_female,
+    "pct change in male voters" = pctchg_male
   ) %>% 
   kable(format.args = list(big.mark = ",")) %>% #formatting adds (,) 1000s separator
   kable_styling(bootstrap_options = c("striped", "condensed"), 
                 full_width = F,
                 position = "left") %>% 
-  column_spec(1, bold = T)
+  column_spec(1, bold = T) %>% 
+  add_header_above(c(" ", "Differences from 2016" = 2, "Percent Change from 2016" = 2))
 
 
 ```
@@ -285,7 +288,8 @@ age_states %>%
   kable_styling(bootstrap_options = c("striped"),
                 full_width = F,
                 position = "left") %>%
-  column_spec(1, bold = T)
+  column_spec(1, bold = T) %>% 
+  add_header_above(c(" ", "Percent Change from 2016" = 6))
 
 
 
@@ -320,11 +324,7 @@ age_states %>%
 
 ### Race
 
-*(Note this designation is based on a statistical model by Catalist, it is not taken from state voting registrations themselves.)*
-
 ```{r, echo=FALSE}
-
-# votedata
 
 race_states <- votedata %>% 
   group_by(cycle, state, race) %>% 
@@ -345,6 +345,8 @@ race_states <- votedata %>%
 
 Growth in early voters by modeled racial groups to date, compared with the same point before the 2016 election. The table below shows the **percent change** in 2020 compared with 2016 at the same point before the election.
 
+*(Note: this designation is based on a statistical model by Catalist, it is not taken from state voter registration records themselves.)*
+
 ```{r, echo=FALSE}
 
 
@@ -358,13 +360,14 @@ race_states %>%
   kable_styling(bootstrap_options = c("striped"),
                 full_width = F,
                 position = "left") %>%
-  column_spec(1, bold = T)
+  column_spec(1, bold = T) %>% 
+  add_header_above(c(" ", "Percent Change from 2016" = 3))
 
 
 
 ```
   
-Here below is an expanded table showing the particulars behind those percent changes around Black, Hispanic and Caucasion early voters.
+Below is an expanded table showing more details behind the changes around Black, Hispanic and Caucasion early voters in each state.
 
 ```{r, echo=FALSE}
 
