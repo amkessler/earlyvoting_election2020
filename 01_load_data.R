@@ -78,3 +78,12 @@ write_csv(state_latest, "processed_data/state_latest.csv")
 write_csv(county_latest, "processed_data/county_latest.csv")
 write_csv(state_2016, "processed_data/state_2016.csv")
 write_csv(county_2016, "processed_data/county_2016.csv")
+
+
+#show most recent day to election included
+state_latest %>% 
+  count(days_to_election) %>% 
+  arrange(days_to_election)
+
+state_latest %>% 
+  filter(days_to_election == 9) 

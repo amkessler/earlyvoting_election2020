@@ -1,7 +1,7 @@
 ---
 title: "2020 Election Early Voting Summaries/Breakdowns"
 author: "Aaron Kessler"
-date: "10/25/2020"
+date: "10/26/2020"
 output:
   html_document: default
   pdf_document: default
@@ -22,6 +22,7 @@ options(dplyr.summarise.inform=F)
 
 
 #run processing script to refresh with latest data as needed each day
+# source("01_load_data.R")
 # source("02_analysis.R")
 
 # alternatively, use saved versions of files already created (much faster when new updated data not needed)

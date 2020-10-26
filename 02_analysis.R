@@ -8,7 +8,7 @@ options(scipen = 999)
 
 #set the variable for days before the election
 ### CHANGE THIS DAILY AS NEEDED
-before_election_choice <- 11
+before_election_choice <- 9
 
 
 # load processed data files from step 01
