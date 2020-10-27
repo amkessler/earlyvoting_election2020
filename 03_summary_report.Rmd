@@ -1,7 +1,7 @@
 ---
-title: "2020 Election Early Voting Summaries/Breakdowns"
-author: "Aaron Kessler, Investigative Data Team"
-date: "10/26/2020"
+title: "2020 Election Early Voting Breakdowns - Presidential Battlegrounds"
+author: "Aaron Kessler, Investigative Data Team, Ind. Group"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
   html_document: default
   pdf_document: default
@@ -34,7 +34,6 @@ state_grandtots_bothyears <- readRDS("processed_data/state_grandtots_bothyears.r
 
 # load lookup file with key state designations for prez and senate
 keystates_lookup <- read_excel("processed_data/keystates_elex2020.xlsx")
-
 
 #pull national votes cast/return number for use below
 value_national_2016 <- natl_grandtots_bothyears %>% pull(x2016)
@@ -81,11 +80,11 @@ votedata <- votedata %>%
 
 ```
 
-Bloomberg is partnering with Catalist, a data company that works with Democrats and others, to compile counts of ballots cast before Election Day, either early in-person or by-mail. The data is being provided each weekday morning.
-
-As of the morning of `r format(Sys.Date(), "%B %d, %Y")`, at least **`r format(value_national_2020, big.mark=",")`** votes have been cast early or by mail nationwide, according to data collected by Catalist. This represents a **`r format(value_national_pctchg)`** percent change from 2016, when `r format(value_national_2016, big.mark=",")` votes were cast at this point.  
+Bloomberg is partnering with Catalist, a data company that works with Democrats and others, to compile counts of ballots cast before Election Day, either early in-person or by-mail, across 40 U.S. states.  
   
-Details on ballots cast in selected states follow... 
+The data is compiled from individual-level voting records in those states and is being provided to us each weekday morning. (Because of when and how certain states report their totals, you may see slight variations between Catalist's data and the AP's daily tallies). 
+
+Below are breakdowns of the **ballots cast as of the morning of `r format(Sys.Date(), "%B %d, %Y")`**, in selected presidential battleground states... 
   
 ## Battleground State Totals
 
