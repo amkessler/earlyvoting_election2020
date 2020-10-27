@@ -1,6 +1,6 @@
 ---
 title: "2020 Election Early Voting Summaries/Breakdowns"
-author: "Aaron Kessler, INDG Investigative Data Team"
+author: "Aaron Kessler, Investigative Data Team"
 date: "10/26/2020"
 output:
   html_document: default

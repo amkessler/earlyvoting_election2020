@@ -21,6 +21,10 @@ county_2016 <- readRDS("processed_data/county_2016.rds")
 state_latest %>% 
   summarise(sum(ballots_returned))
 
+state_latest %>% 
+  filter(state == "PA") %>% 
+  summarise(sum(ballots_returned))
+
 
 #filter all the datasets based on days before election desired
 state_latest <- state_latest %>% 
@@ -115,8 +119,13 @@ saveRDS(natl_grandtots_bothyears, "processed_data/natl_grandtots_bothyears.rds")
 
 
 
-
 ### STATE ####
+
+state_bothcycles %>% 
+  filter(state == "PA") %>% 
+  group_by(cycle) %>% 
+  summarise(sum(ballots_returned, na.rm = TRUE))
+
 
 #calculate state grand totals for early voting
 state_grandtots_bothyears <- state_bothcycles %>% 
