@@ -81,9 +81,11 @@ votedata <- votedata %>%
 
 ```
 
-Bloomberg is partnering with Catalist, a data company that works with Democrats and others, to compile counts of ballots cast before Election Day, either early in-person or by-mail, across 40 U.S. states.  
+Bloomberg has an agreement with Catalist, a data company that works with Democrats and others, to compile counts of individual ballots cast before Election Day, either early in-person or by-mail, across 40 U.S. states.  
   
-The data is compiled from individual-level voting records in those states and is being provided to us each weekday morning. (Because of when and how certain states report their totals, you may see slight variations between Catalist's data and the AP's daily tallies). 
+The data is compiled from individual-level voting records in those states and is being provided to us each weekday morning. (Because of when and how certain states report their aggregate totals vs. individual voter-level information, you may see slight variations between Catalist's data and the AP's daily statewide tallies).  
+  
+Our agreement allows us to use this data for stories and other news content across all platforms, provided we simply cite Catalist as the data source. If there are questions about what you see below, or you have ideas for other kinds of more targeted breakdowns that would help you in your stories or interactives, please drop a line at akessler39@bloomberg.net.
 
 Below are breakdowns of the **ballots cast as of the morning of `r format(Sys.Date(), "%B %d, %Y")`**, in states with this year's most competitive Senate races... 
   
