@@ -86,4 +86,8 @@ state_latest %>%
   arrange(days_to_election)
 
 state_latest %>% 
-  filter(days_to_election == 9) 
+  filter(days_to_election == 6) 
+
+state_latest %>% 
+  filter(days_to_election == 6) %>% 
+  count(state)
