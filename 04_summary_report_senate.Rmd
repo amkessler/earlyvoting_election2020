@@ -3,8 +3,8 @@ title: "2020 Election Early Voting Breakdowns - Key Senate Races"
 author: "Aaron Kessler, Investigative Data Team"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
