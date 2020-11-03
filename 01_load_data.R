@@ -86,7 +86,7 @@ state_latest %>%
   arrange(days_to_election)
 
 state_latest %>% 
-  filter(days_to_election == 2) 
+  filter(days_to_election == 1) 
 
 state_latest %>% 
   filter(days_to_election == 2) %>% 
