@@ -1,6 +1,7 @@
 library(tidyverse)
 library(janitor)
 library(lubridate)
+library(tidycensus)
 
 #import raw daily files for 2020 ####
 #when downloading new files, rename the new ones to have "latest" in place of their proceeding datestamp
@@ -91,3 +92,27 @@ state_latest %>%
 state_latest %>% 
   filter(days_to_election == 2) %>% 
   count(state)
+
+
+#### POST-ELECTION PENN. VOTES ####
+state_latest %>% 
+  filter(state == "PA",
+         days_to_election <= 0) %>% 
+  group_by(days_to_election) %>% 
+  summarise(votes_cast = sum(ballots_returned))
+
+
+pa_counties_grouped_elexdayandafter <- county_latest %>% 
+  filter(state == "PA",
+         days_to_election <= 0) %>% 
+  group_by(days_to_election, countyfips) %>% 
+  summarise(votes_cast = sum(ballots_returned)) %>% 
+  arrange(desc(votes_cast))
+
+pa_counties_grouped_elexdayandafter
+
+#add fips county names
+fips_lookuptable
+
+inner_join(pa_counties_grouped_elexdayandafter, fips_lookuptable, by = "countyfips")
+
