@@ -87,10 +87,10 @@ state_latest %>%
   arrange(days_to_election)
 
 state_latest %>% 
-  filter(days_to_election == 1) 
+  filter(days_to_election < 0) 
 
 state_latest %>% 
-  filter(days_to_election == 2) %>% 
+  filter(days_to_election < 0) %>% 
   count(state)
 
 
@@ -111,8 +111,5 @@ pa_counties_grouped_elexdayandafter <- county_latest %>%
 
 pa_counties_grouped_elexdayandafter
 
-#add fips county names
-fips_lookuptable
 
-inner_join(pa_counties_grouped_elexdayandafter, fips_lookuptable, by = "countyfips")
 
